@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 sei la
-
+sera?
 
 ```{r, t}
 max_time <- 60;
