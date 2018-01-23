@@ -1,0 +1,137 @@
+---
+title: "Untitled"
+author: "Raul Ossada"
+date: "23 de janeiro de 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r, t}
+max_time <- 60;
+```
+
+
+
+## Ruído Branco (White Noise)
+
+```{r, wn}
+set.seed(seed=1234);
+
+dados <- rnorm(n=max_time, mean=0, sd=1);
+
+wn.ts <- ts(data=dados);
+
+plot(x=wn.ts, main='Ruído Branco');
+abline(h=mean(wn.ts), lty='dashed', col='red');
+
+hist(x=wn.ts, freq=FALSE);
+curve( expr=dnorm(x, mean=0, sd=1), col='blue', add=TRUE);
+
+qqnorm(y=wn.ts);
+qqline(y=wn.ts, lty='dashed', col='red');
+
+acf(x=wn.ts, type='correlation');
+
+acf(x=wn.ts, type='partial');
+```
+
+
+
+## Random Walk (Passeio Aleatório)
+
+```{r, rw1}
+set.seed(seed=1234);
+
+dados2 <- NULL;
+dados2[1] <- 17;
+
+for(ii in 2:max_time){
+  dados2[ii] <- dados2[ii-1] + rnorm(n=1, mean=0, sd=1);
+}
+
+rw1.ts <- ts(data=dados2);
+
+#####
+plot(x=rw1.ts, main='Passeio Aleatório');
+abline(h=mean(rw1.ts), lty='dashed', col='red');
+
+hist(x=rw1.ts, freq=FALSE, ylim=c(0,0.4) );
+curve( expr=dnorm(x, mean=0, sd=1), col='blue', add=TRUE);
+
+qqnorm(y=rw1.ts);
+qqline(y=rw1.ts, lty='dashed', col='red');
+
+acf(x=rw1.ts, type='correlation');
+
+acf(x=rw1.ts, type='partial');
+```
+
+```{r, rw2}
+rw2.ts <- diff(rw1.ts);
+
+plot(x=rw2.ts, main='Passeio Aleatório - Diff');
+abline(h=mean(rw2.ts), lty='dashed', col='red');
+
+hist(x=rw2.ts, freq=FALSE);
+curve( expr=dnorm(x, mean=0, sd=1), col='blue', add=TRUE);
+
+qqnorm(y=rw2.ts);
+qqline(y=rw2.ts, lty='dashed', col='red');
+
+acf(x=rw2.ts, type='correlation');
+
+acf(x=rw2.ts, type='partial');
+```
+
+```{r, ma}
+ma.ts <- arima.sim(model=list( ma=c(0.2, 0.4) ), n=max_time);
+
+plot(x=ma.ts, main='Média Móvel');
+abline(h=mean(ma.ts), lty='dashed', col='red');
+
+hist(x=ma.ts, freq=FALSE);
+curve( expr=dnorm(x, mean=0, sd=1), col='blue', add=TRUE);
+
+qqnorm(y=ma.ts);
+qqline(y=ma.ts, lty='dashed', col='red');
+
+acf(x=ma.ts, type='correlation');
+
+acf(x=ma.ts, type='partial');
+```
+
+
+```{r}
+noise <- rnorm(n=(max_time+2), mean=0, sd=1);
+
+ma_q2 <- NULL;
+
+theta1 <- 0.7;
+theta2 <- 0.2;
+for(ii in 3:(max_time+2) ){
+    ma_q2[ii] <- noise[ii] + theta2*noise[ii-1] + theta2*noise[ii-2];
+}
+
+ma_q2a <- ma_q2[ 3:(max_time+2) ];
+
+ma_q2.ts <- ts(data=ma_q2a);
+
+#####
+plot(x=ma_q2.ts, main='Média Móvel(q=2)');
+abline(h=mean(ma_q2.ts), lty='dashed', col='red');
+
+hist(x=ma_q2.ts, freq=FALSE);
+curve( expr=dnorm(x, mean=0, sd=1), col='blue', add=TRUE);
+
+qqnorm(y=ma_q2.ts);
+qqline(y=ma_q2.ts, lty='dashed', col='red');
+
+acf(x=ma_q2.ts, type='correlation');
+
+acf(x=ma_q2.ts, type='partial');
+```
