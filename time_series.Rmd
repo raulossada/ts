@@ -136,3 +136,21 @@ acf(x=ma_q2.ts, type='correlation');
 
 acf(x=ma_q2.ts, type='partial');
 ```
+
+```{r}
+set.seed(seed=1234);
+ma.ts <- arima.sim(model=list( ar=c(0.2, 0.4) ), n=max_time);
+plot(ma.ts);
+
+library('forecast');
+
+model <- auto.arima(y=ma.ts, d=0, ic="aicc", approximation=FALSE);
+summary(model);
+str(model);
+
+plot(model$x, col=grey.colors(n=1, alpha=0.25), lwd=6, ylab='x');
+lines(model$fitted, col='orange', lwd=3);
+legend("bottomright", legend=c("Observed", "ARIMA"), lty=1, lwd=c(6,3),
+       col=c(grey.colors(1, alpha=0.25), "orange"), bty="n");
+
+```
